@@ -9,6 +9,8 @@ Created on Fri Jan 21 15:00:52 2022
         合计  data_total
         出勤率 atten_coor
     2、字体格式，没统一。需后续改格式
+    3、流程有点乱，
+    4、缺 界面
  
 """
 
@@ -16,14 +18,27 @@ Created on Fri Jan 21 15:00:52 2022
 
 import xlwings as xw
 
+"""初始化，"""
 
+
+def _initial():
+    pass
+
+# if __name__ == "__main__":
+    
+#     _initial(work_name,sheet_name, work_day_adj, )
+    
+    
+
+
+# 打开exel
 wb= xw.Book('11、12月.xlsx')
 sht = wb.sheets['12月']
 # print(sht.range('A1').value)
 # print(sht.range(0,0).value) 
 # sht.range('B10').value=10  # 写入数据
-data=sht.range('A1','AD1').value # list,  输出从A1-AD1的数据
 
+# 获取行列
 info = sht.used_range
 nrow= info.last_cell.row
 ncoloumns= info.last_cell.column
@@ -31,7 +46,21 @@ ncoloumns= info.last_cell.column
 workday= ncoloumns-9 # 工作日
 print('工作日总计:',workday,'天')
 
+org_list=[]  # 组织列表
+org_name_now=''
+org_flga=''
+begin=True
+org_total=0 # 部门总请假次数
+per_total=0 # 部门总人数
+# 出勤率 分组
+org_class=[]
 
+attA = {} # 100%
+attB = {}
+attC = {} 
+attD = {} # <90%
+
+# 个人请假天数求和
 def per_sum(per_data):
     sum=0
     for i in range(len(per_data)):
@@ -40,23 +69,31 @@ def per_sum(per_data):
             # ++i   python不适用
     return sum
 
-def org_sum():
-    pass
+# 感觉出勤率 分组
+def org_classify(data,attA,attB,attC,attD):
+    # 考勤率分组
+    # print(data)
+    attence= list(data.values())
+    
+    if attence[0] == 1.0:
+        attA.update(data)
+        # print(attA)
+    
+    else:
+        if attence[0]< 0.9:
+            attD.update(data)
+        else:
+            if attence[0] < 0.95:
+                attC.update(data)
+            else:
+                attB.update(data)
+    
+# 对分组内 部门 按出勤率降序排序
+def sort_class(att):
+    # print(att)
+    return sorted(att.items(),key= lambda x:x[1], reverse=False)
 
-org_list=[]  # 组织列表
 
-org_name_now=''
-org_flga=''
-begin=True
-org_total=0 # 部门总请假次数
-per_total=0 # 部门总人数
-
-# 出勤率 分组
-org_class=[]
-attA = [] # 100%
-attB = []
-attC = [] # <90%
-attD = []
 for _row in range(2,nrow-5):
     # 包头 不包尾  [2,3,,,,,nrow-5) 
     """xlwings，对应实际单元格的标识，从A1开始
@@ -65,24 +102,21 @@ for _row in range(2,nrow-5):
     表格最后还有 统计出勤率排名，要再减去几行
     """
     
-    per_leave_number=0 # 个人本月请假天数
-    
+    per_leave_number=0 # 个人本月请假天数    
     add_orgname = True
     str_row='A' + str(_row)
     org_name= sht.range(str_row).value
-    data_be='C' + str(_row)
-    
+    data_be='C' + str(_row)   
     data_ed='AC' + str(_row)
-    
-    per_data=sht.range(data_be,data_ed).value # 把这个人这个月的请假情况 存到list 中，再遍历list 
-    
     data_stor_coor='AD'+ str(_row) # 个人请假次数
     data_total = 'AB'+ str(_row) # '总计'
     org_attendance = '' # 计算结果，存为文本
-    attendance =0
+    # attendance =0 # 
     atten_coor1 = 'AE'+ str(_row)
     atten_coor2 = 'AF'+ str(_row)
     
+    
+    per_data=sht.range(data_be,data_ed).value # 把这个人这个月的请假情况 存到list 中，再遍历list 
     if begin:
         
         org_flga=org_name
@@ -135,13 +169,22 @@ for _row in range(2,nrow-5):
                 
                 """所有部门的出勤率 存到字典中
                     最后遍历字典，分组"""
-                   
+                  
+                name= org_flga
+                attence= att_num
                 org_={
-                    'name': org_flga,
-                    'attence': att_num
+                    name: attence,
+
+                    }# {'不动产':0.922}
                 
-                    }
-                org_class.append(org_) # 存放字典元素，字典里存 单位：出勤率
+                # org_={
+                #     'name':org_flga,
+                #     'attence':att_num
+                #     } # {'name':不动产，'attence':0.922}
+                # org_class.append(org_) # 存放字典元素，字典里存 单位：出勤率
+                
+
+                org_classify(org_,attA,attB,attC,attD) # 输入这个字典元素，将其分类
                 
                 
             else:
@@ -164,62 +207,36 @@ for _row in range(2,nrow-5):
     # print(sht.range(data_stor_coor).value)
     
     # 添加新部门
+    # 对计算出勤率没用，只是顺便统计所有单位
     if add_orgname:
         # print('add')
         org_list.append(org_name)
-        
 
-        
-
-# 考勤率分组
-for data in org_class:
-    if data['attence'] == 1.0:
-        attA.append(data)
     
-    else:
-        if data['attence'] < 0.9:
-            attD.append(data)
-        else:
-            if data['attence'] < 0.95:
-                attC.append(data)
-            else:
-                attB.append(data)
-
-
-# value(考勤率) 排序
-
-
-# for data in attA:
-#     print(data['name'],'{:.2%}'.format(data['attence']))
-    
-# 打印分组
+"""打印分组"""
 
 # 位置坐标
 A_coor= 'B'+str(nrow)
 B_coor= 'B'+str(nrow-1)
 C_coor= 'B'+str(nrow-2) 
 D_coor= 'B'+str(nrow-3)
-# 整合分组所有数据 存为list，之后再一起打印
-attA_list=[]
-attB_list=[]
-attC_list=[]
-attD_list=[]
 
-# 存放要打印的数据
+
+attA_sorted= sort_class(attA)
+attB_sorted= sort_class(attB)
+attC_sorted= sort_class(attC)
+attD_sorted= sort_class(attD)
 
 
 def print_class(att,coor):
-    """打印字典 key-value
-        没实现根据value对字典排序
-        排序后只存了key
-    """
+    
     ct= len(att)
     count = 0
     str_data=''
     for data in att:
-        str_data += data['name']  
+        str_data += data[0] 
         str_data += ':'
-        str_att= str('{:.2%}'.format(data['attence']))
+        str_att= str('{:.2%}'.format(data[1]))
         # str_data += data['attence']
         str_data += str_att
         count +=1
@@ -231,23 +248,11 @@ def print_class(att,coor):
             
     sht.range(coor).value=str_data
 
-def print_class_sort(att,coor):
-    """把字典att的key和value 分别提取两个list
-    根绝 value 对两个list排序
-    打印的时候两个list组合
-    """
-    str_data=''
-    name= att['name']
-    attence= att['attence']
-    sorted_id = sorted(range(len(attence)), key=lambda k: attence[k], reverse=True)
-    
-    
-    
 
-print_class(attA,A_coor)
-print_class(attB,B_coor)
-print_class(attC,C_coor)
-print_class(attD,D_coor)
+print_class(attA_sorted,A_coor)
+print_class(attB_sorted,B_coor)
+print_class(attC_sorted,C_coor)
+print_class(attD_sorted,D_coor)
 
 # attA 是个字典，，不能索引！！ attA[i] 报错 'list' object is not callable
 # for i in range(len(attA)):
