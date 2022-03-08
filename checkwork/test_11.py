@@ -9,11 +9,19 @@ Created on Fri Jan 21 15:00:52 2022
         请假（人次）	data_stor_coor
         合计  data_total
         出勤率 atten_coor
-        分组位置   A_coor 
+        分组位置   A_coor
+    1.1 遍历各单位数据 for循环的范围也要调整，按理说是不用的
     2、字体格式，没统一。需后续改格式
     3、流程有点乱，
     4、缺 界面
- 
+    
+    3.8修改：
+    新的表头，日期合并，不再空出节假日
+    列数总是多数几列
+    工作日，直接数吧
+
+
+ 新增  公假不计请假, per_sum()
 """
 
 
@@ -23,7 +31,7 @@ import xlwings as xw
 
 
 """初始化，"""
-def _initial(work_name,sheet_name, work_day_adj):
+def _initial(work_name,sheet_name):
     
     # 打开exel
     wb= xw.Book(work_name)
@@ -36,22 +44,27 @@ def _initial(work_name,sheet_name, work_day_adj):
     info = sht.used_range
     nrow= info.last_cell.row
     ncoloumns= info.last_cell.column
-    # print(ncoloumns)
-    workday= ncoloumns-work_day_adj # 工作日
-    print('工作日总计:',workday,'天')
+    print("COLOUMNS:",ncoloumns)
+    # workday= ncoloumns-work_day_adj # 工作日
+    # print('工作日总计:',workday,'天')
     
-    return nrow,ncoloumns,wb,sht,workday
+    return nrow,ncoloumns,wb,sht
 
 
 if __name__ == "__main__":
     
-    work_name= '11、12月.xlsx'
-    sheet_name= '12月'
-    work_day_adj= 9
-    
-    nrow,ncoloumns,wb,sht,workday= _initial(work_name,sheet_name, work_day_adj)
-    
-    
+    work_name= '考勤汇总表1.xlsx'
+    # work_name= '11、12月.xlsx'
+    sheet_name= 'A'
+
+    # work_day_adj= 8 # 直接数，不需要调整
+    workday= 16
+    nrow,ncoloumns,wb,sht= _initial(work_name,sheet_name)
+
+    print('工作日总计:',workday,'天')
+    print("行数：",nrow)
+
+
     
     org_list=[]  # 组织列表
     org_name_now=''
@@ -70,10 +83,18 @@ if __name__ == "__main__":
     # 个人请假天数求和
     def per_sum(per_data):
         sum=0
+        # for i in range(len(per_data)):
+        #     if per_data[i] != None :
+        #         if per_data[i]!= 0: # 不是公假
+        #             sum += 1
+        #         # ++i   python不适用
+                
+                
         for i in range(len(per_data)):
-            if per_data[i] != None:
+            if per_data[i] != None :
                 sum += 1
-                # ++i   python不适用
+        
+        
         return sum
     
     # 感觉出勤率 分组
@@ -113,14 +134,16 @@ if __name__ == "__main__":
         add_orgname = True
         str_row='A' + str(_row)
         org_name= sht.range(str_row).value
-        data_be='C' + str(_row)   
-        data_ed='AC' + str(_row)
-        data_stor_coor='AD'+ str(_row) # 个人请假次数
-        data_total = 'AB'+ str(_row) # '总计'
+        data_be='C' + str(_row)
+
+        """需要修改 坐标"""
+        data_ed='X' + str(_row)  # 改   数据结尾
+        data_stor_coor='Y'+ str(_row) # 存放 个人请假次数
+        data_total = 'W'+ str(_row) # '总计'
         org_attendance = '' # 计算结果，存为文本
         # attendance =0 # 
-        atten_coor1 = 'AE'+ str(_row)
-        atten_coor2 = 'AF'+ str(_row)
+        atten_coor1 = 'Z'+ str(_row) # "出勤率："
+        atten_coor2 = 'AA'+ str(_row) # "数值，float"
         
         
         per_data=sht.range(data_be,data_ed).value # 把这个人这个月的请假情况 存到list 中，再遍历list 
@@ -261,7 +284,9 @@ if __name__ == "__main__":
     print_class(attC_sorted,C_coor)
     print_class(attD_sorted,D_coor)
     
-    # attA 是个字典，，不能索引！！ attA[i] 报错 'list' object is not callable
+   
+    
+   # attA 是个字典，，不能索引！！ attA[i] 报错 'list' object is not callable
     # for i in range(len(attA)):
     #     str_data += attA(i)['name']
     #     if i != len(attA):

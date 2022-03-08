@@ -3,6 +3,10 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
+"""运行之后，随便点击任意可输入文本的窗口
+    都能输入指定 的内容"""
+
+
 import time
 import random
 import pyautogui
