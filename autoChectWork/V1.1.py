@@ -19,6 +19,10 @@ Created on Fri Jan 21 15:00:52 2022
     新的表头，日期合并，不再空出节假日
     列数总是多数几列
     工作日，直接数吧
+    
+    
+    V1.1 添加新功能
+    打印到word，统计每个人请假分类，每个单位
 
 
  新增  公假不计请假, per_sum()
@@ -53,9 +57,9 @@ def _initial(work_name,sheet_name):
 
 if __name__ == "__main__":
     
-    work_name= '考勤汇总表1.xlsx'
+    work_name= '2月份考勤汇总表.xlsx'
     # work_name= '11、12月.xlsx'
-    sheet_name= 'A'
+    sheet_name= '12月'
 
     # work_day_adj= 8 # 直接数，不需要调整
     workday= 16
@@ -97,14 +101,14 @@ if __name__ == "__main__":
         
         return sum
     
-    # 感觉出勤率 分组
+    # 根据出勤率 分组
     def org_classify(data,attA,attB,attC,attD):
         # 考勤率分组
         # print(data)
         attence= list(data.values())
         
         if attence[0] == 1.0:
-            attA.update(data)
+            attA.update(data) # 更新添加
             # print(attA)
         
         else:
@@ -286,19 +290,11 @@ if __name__ == "__main__":
     
    
     
-   # attA 是个字典，，不能索引！！ attA[i] 报错 'list' object is not callable
-    # for i in range(len(attA)):
-    #     str_data += attA(i)['name']
-    #     if i != len(attA):
-    #         str_data += '、'
-    #     else:
-    #         str_data += '。'
-    
         
     
     
     
-    
+
     
     # wb.save(r'成绩01.xlsx')  # 加名字会另存为。不加名字直接保存当前文件
     # wb.close()  # 注意要退出
