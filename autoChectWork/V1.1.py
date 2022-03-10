@@ -20,7 +20,8 @@ Created on Fri Jan 21 15:00:52 2022
     列数总是多数几列
     工作日，直接数吧
     
-    
+
+    先把 0.5的类别加进去
     V1.1 添加新功能
     打印到word，统计每个人请假分类，每个单位
 
@@ -96,7 +97,13 @@ if __name__ == "__main__":
                 
         for i in range(len(per_data)):
             if per_data[i] != None :
-                sum += 1
+                if per_data[i] == '0.5': # 单元格设置为 文本，此处0.5也是文本
+                    # 同时发现个小问题，excel 中，单元格格式由数值改为文本后，要双击修改一下单元格，内容才会变为文本类型。
+                    # 即读取出的变量0.5 为 ‘0.5’，，否则仍为 0.5
+                    # print(type(per_data[i]))
+                    sum += 0.5
+                else:
+                    sum += 1
         
         
         return sum
@@ -126,7 +133,7 @@ if __name__ == "__main__":
         return sorted(att.items(),key= lambda x:x[1], reverse=False)
     
     
-    for _row in range(2,nrow-5):
+    for _row in range(2,nrow-7):
         # 包头 不包尾  [2,3,,,,,nrow-5) 
         """xlwings，对应实际单元格的标识，从A1开始
         for 循环是从0开始，，A0所以报错！！！！！

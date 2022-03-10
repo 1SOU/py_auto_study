@@ -1,2 +1,0 @@
-测试，pycharm git
-可以push,这一句是远程仓库中修改

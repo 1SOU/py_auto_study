@@ -6,17 +6,41 @@
 import xlwings as xw
 from docx import Document
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
 
-    a=[0,1,2]
-    print(a)
+    # wb= xw.Book("t.xlsx")
+    # sht= wb.sheets['Sheet1']
+    #
+    #
+    # lizi=[]
+    # for i in range(1,13):
+    #     coor= 'B'+str(i)
+    #     lizi.append(sht.range(coor).value)
+    #     # print(sht.range(coor).value)
+    #     print(lizi)
+
+    # # data= sht.range('C13').value + sht.range('D13').value
+    # data = sht.range('c13').value
+    # if (data==0.5):
+    #     print('ok')
+
+    wb = xw.Book("2月份考勤汇总表.xlsx")
+    sht = wb.sheets['12月']
+
+    data = sht.range('c25').value
+    data1 = sht.range('d25').value
+    data2= sht.range('d32').value
+    # if (sht.range('C25').value == '0.5'):
+    #     print('ok')
+    # else:
+    #     print(sht.range('C25').value)
 
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # wb.save()
+    # wb.close()
+
+
+
+
