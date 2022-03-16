@@ -4,40 +4,31 @@ Created on Fri Jan 21 15:00:52 2022
 
 @author: LENOVO
 
-不足：1、存放统计结果的列需要手动填写 
-        data_be,data-end
-        请假（人次）	data_stor_coor
-        合计  data_total
-        出勤率 atten_coor
-        分组位置   A_coor
-    1.1 遍历各单位数据 for循环的范围也要调整，按理说是不用的
-    2、字体格式，没统一。需后续改格式
-    3、流程有点乱，
-    4、缺 界面
-    
     3.8修改：
     新的表头，日期合并，不再空出节假日
     列数总是多数几列
     工作日，直接数吧
-    
 
-    先把 0.5的类别加进去
-    V1.1 添加新功能
-    打印到word，统计每个人请假分类，每个单位
+    新增  公假不计请假, per_sum()
 
+    3.16开始加入功能 一.2：打印个人，各单位，请假分类汇总
 
- 新增  公假不计请假, per_sum()
 """
 
 
 
 import xlwings as xw
+from docx import Document
 
 
 
 """初始化，"""
 def _initial(work_name,sheet_name):
-    
+
+    # 导出分类数据的文本
+    请假次数总计= Document()
+
+
     # 打开exel
     wb= xw.Book(work_name)
     sht = wb.sheets[sheet_name]
