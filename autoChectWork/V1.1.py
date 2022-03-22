@@ -26,7 +26,7 @@ from docx import Document
 def _initial(work_name,sheet_name):
 
     # 导出分类数据的文本
-    请假次数总计= Document()
+    结果汇总= Document()
 
 
     # 打开exel
@@ -75,6 +75,20 @@ if __name__ == "__main__":
     attB = {}
     attC = {} 
     attD = {} # <90%
+
+
+    # 文字数据打印
+    # 事假 = 0
+    # 病假 = 0
+    # 婚假 = 0
+    # 产假 = 0
+    # 公假 = 0
+    # 年休 = 0
+    # 调休 = 0
+    # 借调 = 0
+    # 丧假 = 0
+    # 旷岗 = 0
+    数据=[0,0,0,0,0,0,0,0,0,0]
     
     # 个人请假天数求和
     def per_sum(per_data):
@@ -98,7 +112,42 @@ if __name__ == "__main__":
         
         
         return sum
-    
+
+
+    # 统计各类请假天数
+
+
+    def func1(i):
+        数据[0] +=i
+
+
+    def per_num(per_data):
+
+        """标识符
+          1事假 1
+           2公假	0
+           3病假 ☆
+           4婚假 □
+            5产假	◇
+            6旷岗	×
+
+            7年休	※
+            8调休	△
+            9借调	▼
+            10丧假	⊹
+
+
+           """
+
+        switcher={
+
+        }
+        # for i in range(len(per_data)):
+
+
+
+
+
     # 根据出勤率 分组
     def org_classify(data,attA,attB,attC,attD):
         # 考勤率分组
@@ -178,7 +227,7 @@ if __name__ == "__main__":
                 
                 # print(2)
             else:
-                if org_name==None:
+                if org_name is None:
                 # 空行"""计算本部门出勤率"""
                 # 计算此单位的总出勤率
                 
@@ -196,7 +245,7 @@ if __name__ == "__main__":
                     sht.range(atten_coor1).value=('出勤率：')
                    
                     
-                    sht.range(atten_coor2).value=(att_num)
+                    sht.range(atten_coor2).value=att_num
                     
                     
                     """所有部门的出勤率 存到字典中

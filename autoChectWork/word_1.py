@@ -1,5 +1,11 @@
+
+
+
+
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+# from docx.enum.text import 
+
 
 doc = Document('2.docx') # 若是不写文件名字，就新建
 
@@ -12,6 +18,6 @@ doc = Document('2.docx') # 若是不写文件名字，就新建
 # runs.add_run('aaa') # 正常
 
 runs=doc.add_paragraph('正文1')
-runs.alignement= WD_PARAGRAPH_ALIGNMENT.
+runs.alignement= WD_PARAGRAPH_ALIGNMENT.CENTER
 
 doc.save('2.docx')
