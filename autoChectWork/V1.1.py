@@ -77,21 +77,14 @@ if __name__ == "__main__":
     attD = {} # <90%
 
 
-    # 文字数据打印
-    # 事假 = 0
-    # 病假 = 0
-    # 婚假 = 0
-    # 产假 = 0
-    # 公假 = 0
-    # 年休 = 0
-    # 调休 = 0
-    # 借调 = 0
-    # 丧假 = 0
-    # 旷岗 = 0
-    数据=[0,0,0,0,0,0,0,0,0,0]
+
     
     # 个人请假天数求和
     def per_sum(per_data):
+        """V1.0
+            所有请假统一识别为请假+1
+            采用新功能per_num"""
+
         sum=0
         # for i in range(len(per_data)):
         #     if per_data[i] != None :
@@ -113,40 +106,92 @@ if __name__ == "__main__":
         
         return sum
 
-
     # 统计各类请假天数
-
-
-    def func1(i):
-        数据[0] +=i
-
-
     def per_num(per_data):
 
         """标识符
-          1事假 1
-           2公假	0
-           3病假 ☆
-           4婚假 □
-            5产假	◇
-            6旷岗	×
+          0事假 1
+           1公假	0
+           2病假 ☆
+           3婚假 □
+            4产假	◇
+            5旷岗	×
 
-            7年休	※
-            8调休	△
-            9借调	▼
-            10丧假	⊹
-
+            6年休	※
+            7调休	△
+            8借调	▼
+            9丧假	⊹
 
            """
+        # 文字数据打印
+        # 事假 = 0
+        # 病假 = 0
+        # 婚假 = 0
+        # 产假 = 0
+        # 公假 = 0
+        # 年休 = 0
+        # 调休 = 0
+        # 借调 = 0
+        # 丧假 = 0
+        # 旷岗 = 0
+        数据 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # index0 存放这一行（即这个人）请假总天数，之后是各种请假的分类统计
 
-        switcher={
+        for i in range(len(per_data)):
+            # 事假
+            if per_data[i] == '1' or per_data[i] == 1:
+                数据[1] += 1
+                数据[0] += 1
+            elif per_data[i] == '0.5' or per_data[i] == 0.5:
+                数据[1] += 0.5
+                数据[0] += 0.5
+            # 公假
+            elif per_data[i] == '0' or per_data[i] == 0:
+                数据[2] += 1
+                数据[0] += 1
+            # 病假
+            elif per_data[i] == '☆':
+                数据[3] += 1
+                数据[0] += 1
+            # 婚假
+            elif per_data[i] == '□':
+                数据[4] += 1
+                数据[0] += 1
+            # 产假
+            elif per_data[i] == '◇':
+                数据[5] += 1
+                数据[0] += 1
+            # 旷岗
+            elif per_data[i] == '×':
+                数据[6] += 1
+                数据[0] += 1
+            # 年休
+            elif per_data[i] == '※':
+                数据[7] += 1
+                数据[0] += 1
+            # 调休
+            elif per_data[i] == '△':
+                数据[8] += 1
+                数据[0] += 1
+            # 借调
+            elif per_data[i] == '▼':
+                数据[9] += 1
+                数据[0] += 1
+            # 丧假
+            elif per_data[i] == '⊹':
+                数据[10] += 1
+                数据[0] += 1
 
-        }
-        # for i in range(len(per_data)):
+        return  数据
 
 
+    # 打印个人统计
+    def word_per():
+        pass
 
 
+    # 打印部门总计
+    def word_org():
+        pass
 
     # 根据出勤率 分组
     def org_classify(data,attA,attB,attC,attD):
@@ -180,7 +225,6 @@ if __name__ == "__main__":
         
         表格最后还有 统计出勤率排名，要再减去几行
         """
-        
         per_leave_number=0 # 个人本月请假天数    
         add_orgname = True
         str_row='A' + str(_row)
@@ -200,26 +244,28 @@ if __name__ == "__main__":
         per_data=sht.range(data_be,data_ed).value # 把这个人这个月的请假情况 存到list 中，再遍历list 
         if begin:
             
-            org_flga=org_name
-            org_total=0 # 部门请假次数 归零
-            per_total=0
-                 
+            # org_flga=org_name
+            # org_total=0 # 部门请假次数 归零
+            # per_total=0
+            """也不知道当时在想什么，为什么要判断是不是第一行"""
             begin= False
             # print(1)
             #  统计此人请假天数
             
-            per_leave_number= per_sum(per_data)
-            sht.range(data_stor_coor).value= per_leave_number
-            
-            org_total += per_leave_number
-            per_total +=1
+            # per_leave_number= per_sum(per_data)
+            # per_leave_number= per_num(per_data)[0]
+            # sht.range(data_stor_coor).value= per_leave_number
+            #
+            # org_total += per_leave_number
+            # per_total +=1
             
         else:
             if org_name==org_flga:
                 # 仍是同一单位
                 # 统计此人请假天数 
                 add_orgname=False
-                per_leave_number= per_sum(per_data)
+                # per_leave_number= per_sum(per_data)
+                per_leave_number = per_num(per_data)[0]
                 sht.range(data_stor_coor).value= per_leave_number
                 
                 org_total += per_leave_number
@@ -275,16 +321,14 @@ if __name__ == "__main__":
                     per_total =0
                     org_flga=org_name
                     
-                    per_leave_number= per_sum(per_data)
+                    # per_leave_number= per_sum(per_data)
+                    per_leave_number = per_num(per_data)[0]
                     sht.range(data_stor_coor).value= per_leave_number
                     
                     org_total += per_leave_number
                     per_total +=1
-                    # print(4)
                 
-         
-        
-        
+
         # print(sht.range(data_stor_coor).value)
         
         # 添加新部门
@@ -334,6 +378,11 @@ if __name__ == "__main__":
     print_class(attB_sorted,B_coor)
     print_class(attC_sorted,C_coor)
     print_class(attD_sorted,D_coor)
+
+
+    print("over!")
+
+
     
    
     
