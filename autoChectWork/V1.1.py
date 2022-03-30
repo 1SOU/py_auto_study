@@ -213,6 +213,9 @@ if __name__ == "__main__":
                     attB.update(data)
         
     # 对分组内 部门 按出勤率降序排序
+    # att{
+    #      name:attendance;
+    # }
     def sort_class(att):
         # print(att)
         return sorted(att.items(),key= lambda x:x[1], reverse=False)
