@@ -49,9 +49,9 @@ def _initial(work_name,sheet_name):
 
 if __name__ == "__main__":
     
-    work_name= '2月份考勤汇总表.xlsx'
+    work_name= '3月份考勤汇总表.xlsx'
     # work_name= '11、12月.xlsx'
-    sheet_name= '12月'
+    sheet_name= 'A'
 
     # work_day_adj= 8 # 直接数，不需要调整
     workday= 16
@@ -121,6 +121,7 @@ if __name__ == "__main__":
             7调休	△
             8借调	▼
             9丧假	⊹
+            10 公休  █
 
            """
         # 文字数据打印
@@ -134,7 +135,7 @@ if __name__ == "__main__":
         # 借调 = 0
         # 丧假 = 0
         # 旷岗 = 0
-        数据 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # index0 存放这一行（即这个人）请假总天数，之后是各种请假的分类统计
+        数据 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0]  # index0 存放这一行（即这个人）请假总天数，之后是各种请假的分类统计
 
         for i in range(len(per_data)):
             # 事假
@@ -180,6 +181,9 @@ if __name__ == "__main__":
             elif per_data[i] == '⊹':
                 数据[10] += 1
                 数据[0] += 1
+            elif per_data[i] == '█':
+                数据[11] += 1
+                数据[0] += 1
 
         return  数据
 
@@ -221,7 +225,7 @@ if __name__ == "__main__":
         return sorted(att.items(),key= lambda x:x[1], reverse=False)
     
     
-    for _row in range(2,nrow-7):
+    for _row in range(2,nrow-5):
         # 包头 不包尾  [2,3,,,,,nrow-5) 
         """xlwings，对应实际单元格的标识，从A1开始
         for 循环是从0开始，，A0所以报错！！！！！
@@ -235,13 +239,13 @@ if __name__ == "__main__":
         data_be='C' + str(_row)
 
         """需要修改 坐标"""
-        data_ed='X' + str(_row)  # 改   数据结尾
-        data_stor_coor='Y'+ str(_row) # 存放 个人请假次数
-        data_total = 'W'+ str(_row) # '总计'
+        data_ed='AG' + str(_row)  # 改   数据结尾
+        data_stor_coor='AH'+ str(_row) # 存放 个人请假次数
+        data_total = 'AG'+ str(_row) # '总计'
         org_attendance = '' # 计算结果，存为文本
         # attendance =0 # 
-        atten_coor1 = 'Z'+ str(_row) # "出勤率："
-        atten_coor2 = 'AA'+ str(_row) # "数值，float"
+        atten_coor1 = 'AI'+ str(_row) # "出勤率："
+        atten_coor2 = 'AJ'+ str(_row) # "数值，float"
         
         
         per_data=sht.range(data_be,data_ed).value # 把这个人这个月的请假情况 存到list 中，再遍历list 
