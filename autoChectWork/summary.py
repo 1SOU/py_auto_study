@@ -63,14 +63,57 @@ def sum_org(num_data):
     res1=str(res_)
     return res1
 
+
+def sort_class(att):
+    # print(att)
+    return sorted(att.items(),key= lambda x:x[1], reverse=False)
+
+def print_class(att, coor, sht):
+
+    ct = len(att)
+    count = 0
+    str_data = ''
+    for data in att:
+        str_data += data[0]
+        str_data += ':'
+        str_att = str('{:.2%}'.format(data[1]))
+        # str_data += data['attence']
+        str_data += str_att
+        count += 1
+
+        if count != ct:
+            str_data += '、'
+        else:
+            str_data += '。'
+
+    sht.range(coor).value = str_data
+
+
 if __name__ == '__main__':
 
     begin= 9
     end= 295
     data_name= '4月份考勤汇总表.xlsx' #打开 出勤统计结果
     data_sht= '考勤表'
-    sum_name= '考勤情况总表1.xlsx' #输出 情况汇总
+    sum_name= '考勤情况总表.xlsx' #输出 情况汇总
     sum_sht= 'Sheet1'
+
+    """打印出勤率所用的坐标"""
+    # 存放部门名字，出勤率  的坐标
+    org_coor = [8] # 获取部门名字，每次遇到空格，下一行就是部门名字
+    # 因为设置的不是从第一个部门名开始，所以默认添加上
+
+    att_coor = [] # 获取部门出勤率，每次遇到空格
+    # 分组数据，未排序
+    attA = {}
+    attB = {}
+    attC = {}
+    attD = {}
+    # 要打印分组的  坐标
+    A_coor = 'B301'
+    B_coor = 'B300'
+    C_coor = 'B299'
+    D_coor = 'B298'
 
     # 打开表格
     wb_data= xw.Book(data_name)
@@ -85,7 +128,8 @@ if __name__ == '__main__':
     per_count=0 # 统计部门人数
     leave_list_org = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # 部门
     isOrg = False  # 每个部门第一行是部门 名字, 跳过之后 设为Fals
-    for row in range(begin,294):
+
+    for row in range(begin,296):
         print(row)
 
         print_cor+=1
@@ -145,6 +189,11 @@ if __name__ == '__main__':
         else:
             # 遇到空行，下一行 为部门名
 
+            # 获取下个部门名所在坐标，本部门出勤率所在坐标，
+            """因为最后一行空格，可能会导致最后排名中多出一个无数据的部门"""
+            org_coor.append(row+1)
+            att_coor.append(row)
+
             print('打印部门：',print_cor)
             print('下个部门')
             print('')
@@ -168,9 +217,47 @@ if __name__ == '__main__':
 
 
 
+    org_coor.pop()
+    """出勤率排序"""
+    if len(org_coor) == len(att_coor):
+        print("开始排序")
+        for i in range(len(org_coor)):
+            _name_coor= 'A'+str(org_coor[i])
+            _att_coor= 'AM'+str(att_coor[i])
+            org_name= sht_data.range(_name_coor).value
+            org_att= sht_data.range(_att_coor).value
+            data={
+                org_name:org_att
+            }
 
+            if org_att == 1.0:
+                attA.update(data)
+            else:
+                if org_att < 0.9:
+                    attD.update(data)
+                else:
+                    if org_att < 0.95:
+                        attC.update(data)
+                    else:
+                        attB.update(data)
 
-        # else:
+        print("分完组，开始排序")
+        # print(attA, attB, attC, attD)
+
+        # 排序后的分组，下一步打印
+        attA_sorted = sort_class(attA)
+        attB_sorted = sort_class(attB)
+        attC_sorted = sort_class(attC)
+        attD_sorted = sort_class(attD)
+
+        print_class(attA_sorted, A_coor,sht_data)
+        print_class(attB_sorted, B_coor,sht_data)
+        print_class(attC_sorted, C_coor,sht_data)
+        print_class(attD_sorted, D_coor,sht_data)
+
+        print("over!")
+    else:
+        print("error")
 
 
 

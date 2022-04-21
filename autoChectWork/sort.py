@@ -25,20 +25,22 @@ if __name__ == '__main__':
     attC = {}
     attD = {}
     # 要打印分组的  坐标
-    A_coor = 'B45'
-    B_coor = 'B44'
-    C_coor = 'B43'
-    D_coor = 'B42'
+    A_coor = 'B301'
+    B_coor = 'B300'
+    C_coor = 'B299'
+    D_coor = 'B298'
 
 
 
     # t=sht.range('AM33').value
     # print(t)
 
+    """
+    函数应该定义在main函数之外，，，
+    """
     def sort_class(att):
         # print(att)
         return sorted(att.items(),key= lambda x:x[1], reverse=False)
-
 
     def print_class(att, coor):
 
