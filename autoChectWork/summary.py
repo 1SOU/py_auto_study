@@ -14,6 +14,11 @@
         2.整数带小数点
 
 后续：1.每月部门/个人的出勤率折线图
+
+
+增删人员需要改动：
+1. 打印分组坐标A_coor = 'B302'
+2. end= 296
 """
 
 import xlwings as xw
@@ -92,7 +97,7 @@ def print_class(att, coor, sht):
 if __name__ == '__main__':
 
     begin= 9
-    end= 295
+    end= 296
     data_name= '4月份考勤汇总表.xlsx' #打开 出勤统计结果
     data_sht= '考勤表'
     sum_name= '考勤情况总表.xlsx' #输出 情况汇总
@@ -110,10 +115,10 @@ if __name__ == '__main__':
     attC = {}
     attD = {}
     # 要打印分组的  坐标
-    A_coor = 'B301'
-    B_coor = 'B300'
-    C_coor = 'B299'
-    D_coor = 'B298'
+    A_coor = 'B302'
+    B_coor = 'B301'
+    C_coor = 'B300'
+    D_coor = 'B299'
 
     # 打开表格
     wb_data= xw.Book(data_name)
