@@ -16,9 +16,13 @@
 后续：1.每月部门/个人的出勤率折线图
 
 
-增删人员需要改动：
-1. 打印分组坐标A_coor = 'B302'
-2. end= 296
+增删人员需要改动下列参数：
+要用到坐标的：
+1.工作日出勤数据开始-结束范围、  好像EXCEL 里自动算出勤率，用不到了
+2.请假次数分类统计开始-结束、   cla_num_be
+3.出勤率百分比所在坐标         _att_coor
+4.全部人员到296还是295，      end=?
+5.出勤率排名分组坐标          A_coor
 """
 
 import xlwings as xw
@@ -115,10 +119,10 @@ if __name__ == '__main__':
     attC = {}
     attD = {}
     # 要打印分组的  坐标
-    A_coor = 'B302'
-    B_coor = 'B301'
-    C_coor = 'B300'
-    D_coor = 'B299'
+    A_coor = 'B300'
+    B_coor = 'B299'
+    C_coor = 'B298'
+    D_coor = 'B297'
 
     # 打开表格
     wb_data= xw.Book(data_name)
@@ -134,7 +138,7 @@ if __name__ == '__main__':
     leave_list_org = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # 部门
     isOrg = False  # 每个部门第一行是部门 名字, 跳过之后 设为Fals
 
-    for row in range(begin,296):
+    for row in range(begin,end):
         print(row)
 
         print_cor+=1
@@ -152,26 +156,53 @@ if __name__ == '__main__':
 
                 # 最右边区域  各类假的次数分类统计
                 cla_num_be = 'AH'+str(row)
-                cla_num_end = 'AS'+str(row)
+                cla_num_end = 'AT'+str(row)
                 data= sht_data.range(cla_num_be,cla_num_end).value
 
                 print(data)
-                for i in range(len(data)): #共有12列请假次数统计，AH-AS
+                for i in range(len(data)):
+                    if data[i] == '':
+                        data[i] = 0
+                if data[0] != '' or data[1] != '':
+                    leave_list_per[0] += 0.5 * data[0]
+                    leave_list_org[0] += 0.5 * data[0]
+                    leave_list_per[1] += 0.5 * data[1]
+                    leave_list_org[1] += 0.5 * data[1]
+                for i in range(2,len(data)): #共有13列请假次数统计，AH-At ,
 
 
-                    # 第一列是事假0.5 ,单独计算
-                    if i==0:
-                        if data[0] != '':
-                            # print(type(data[i]))
-                            # print(data[i])
-                            leave_list_per[0] += 0.5*data[0]
-                            leave_list_org[0] += 0.5*data[0]
+
+                    '''错误写法：i=0,1 两次循环，累加两次'''
+                    # if i==0 or i==1:
+                    #     # print('计算 半天')
+                    #     if data[0] != '':
+                    #         # print(type(data[i]))
+                    #         # print(data[i])
+                    #         # leave_list_per[0] += 0.5*data[0]
+                    #         leave_list_per[0] += 0.5*data[0]
+                    #         leave_list_org[0] += 0.5*data[0]
+                    #         print('计算0-')
+                    #         print(leave_list_per)
+                    #
+                    #     if data[1] != '':
+                    #
+                    #         leave_list_per[1] += 0.5 * data[1]
+                    #         leave_list_org[1] += 0.5 * data[1]
+
+
                     # 之后正常计算,注意事假0.5，和事假1 都存在leave_list_per[0]这一列！！
-                    elif data[i] !='':
+                    # 公假都在 leave_list_per[1]
 
-                        leave_list_per[i-1] += data[i]
-                        leave_list_org[i-1] += data[i]
-                        # 每次个人增加，部门同事也增加。但是但是到下一行，个人会清空，部门要到下一次isOrg变为True的时候清空
+
+
+
+                    if data[i] !='':
+                        #     data= [0-,1-,0,1,2,3,4,5,6,7,8,9,10,11,12] 15
+                        # leave_list_per= [0,1,2,3,4,5,6,7,8,9,10,11,12] 13
+                        # data 从第三列开始，把数据存到 leave_list_per第一列
+                        leave_list_per[i-2] += data[i]
+                        leave_list_org[i-2] += data[i]
+                        # 每次个人增加，部门同时也增加。但是但是到下一行，个人会清空，部门要到下一次isOrg变为True的时候清空
                 print(leave_list_per)
                 print(leave_list_org)
                 print('')
@@ -227,8 +258,9 @@ if __name__ == '__main__':
     if len(org_coor) == len(att_coor):
         print("开始排序")
         for i in range(len(org_coor)):
+
             _name_coor= 'A'+str(org_coor[i])
-            _att_coor= 'AM'+str(att_coor[i])
+            _att_coor= 'AN'+str(att_coor[i])
             org_name= sht_data.range(_name_coor).value
             org_att= sht_data.range(_att_coor).value
             data={
