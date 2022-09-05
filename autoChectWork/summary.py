@@ -18,11 +18,18 @@
 
 增删人员需要改动下列参数：
 要用到坐标的：
-1.工作日出勤数据开始-结束范围、  好像EXCEL 里自动算出勤率，用不到了
+1.工作日出勤数据开始-结束范围 每一行、  好像EXCEL 里自动算出勤率，用不到了
 2.请假次数分类统计开始-结束、   cla_num_be
 3.出勤率百分比所在坐标         _att_coor
+以上基本不变    不变列，只变行（增减人员）
 4.全部人员到296还是295，      end=?
 5.出勤率排名分组坐标          A_coor
+
+2022.06.02
+
+每月出结果时候，增删人员替换旧空白表，复制一份“考勤情况总表-空白”，在空白表副本上输出防止数据污染
+
+不用了，督查科直接给增删过的空白表
 """
 
 import xlwings as xw
@@ -101,10 +108,10 @@ def print_class(att, coor, sht):
 if __name__ == '__main__':
 
     begin= 9
-    end= 296
-    data_name= '4月份考勤汇总表.xlsx' #打开 出勤统计结果
+    end= 291   # 出勤率排名  这一行
+    data_name= '7月份考勤情况.xlsx' #打开 出勤统计结果
     data_sht= '考勤表'
-    sum_name= '考勤情况总表.xlsx' #输出 情况汇总
+    sum_name= '7月份考勤汇总.xlsx' #输出 情况汇总
     sum_sht= 'Sheet1'
 
     """打印出勤率所用的坐标"""
@@ -119,10 +126,10 @@ if __name__ == '__main__':
     attC = {}
     attD = {}
     # 要打印分组的  坐标
-    A_coor = 'B300'
-    B_coor = 'B299'
-    C_coor = 'B298'
-    D_coor = 'B297'
+    A_coor = 'B295'
+    B_coor = 'B294'
+    C_coor = 'B293'
+    D_coor = 'B292'
 
     # 打开表格
     wb_data= xw.Book(data_name)
